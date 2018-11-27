@@ -1,0 +1,6 @@
+{
+    "UserEmail": "string",
+    "Password": "string",
+    "FirstName": "string",
+    "LastName": "string"
+}
