@@ -44,6 +44,8 @@ class UserBehavior(TaskSet):
         response = self.client.post("/api/users", data = data, headers= headers, verify = False)
         actual_status_code = response.status_code
         assert actual_status_code == 201, "correct status for token should be received expected 201  found = {0}".format(actual_status_code)
+        response_data = response.json()
+        print(response_data)
 
 class GoogleTest(TaskSet):
     @task
@@ -53,10 +55,17 @@ class GoogleTest(TaskSet):
         assert actual_status_code == 200, "expected status: 200 \n Actual:{0}".format(actual_status_code)
 
 
-class WebsiteUser(HttpLocust):
+class GoogleLocust(HttpLocust):
+    host=r"https://www.google.com"
+    task_set = GoogleTest
+    min_wait = 5000
+    max_wait = 9000
+
+class WebsiteUserLocust(HttpLocust):
     """
         defines the user task behavior
     """
+    host = r"https://localhost:44334"
     task_set = UserBehavior
     min_wait = 5000
     max_wait = 9000
