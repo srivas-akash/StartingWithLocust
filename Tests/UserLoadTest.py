@@ -7,7 +7,6 @@ from DataHelper import DataHelper
 from locust import HttpLocust, TaskSet, task
 
 class UserBehavior(TaskSet):
-    
     @staticmethod
     def on_start():
         global user_list
@@ -19,7 +18,7 @@ class UserBehavior(TaskSet):
         user_list_file_name = "../Resources/UserDetails.csv"
         user_list =  csv_helper.get_csv_values(user_list_file_name)
     
-    @task
+    @task(2)
     def get_user_token(self):
         user_emails = user_list["EmailId"]
         user_passwords = user_list["Password"]
@@ -33,6 +32,7 @@ class UserBehavior(TaskSet):
         actual_status_code = response.status_code
         assert actual_status_code == 200, "correct status for token should be received expected 200  found = {0} \n userEmail = {1} \n password= {2}".format(actual_status_code, email, password)
 
+    @task(1)
     def create_user(self):
         first_name = "abc" + str(uuid.uuid4())[:8]
         email = first_name + "@yopmail.com"
@@ -44,6 +44,14 @@ class UserBehavior(TaskSet):
         response = self.client.post("/api/users", data = data, headers= headers, verify = False)
         actual_status_code = response.status_code
         assert actual_status_code == 201, "correct status for token should be received expected 201  found = {0}".format(actual_status_code)
+
+class GoogleTest(TaskSet):
+    @task
+    def get_google(self):
+        response = self.client.get("/")
+        actual_status_code = response.status_code
+        assert actual_status_code == 200, "expected status: 200 \n Actual:{0}".format(actual_status_code)
+
 
 class WebsiteUser(HttpLocust):
     """
